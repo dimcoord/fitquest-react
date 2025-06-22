@@ -1,65 +1,116 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { AuthClient } from '@dfinity/auth-client';
-import Script from 'next/script';
+import { useState, useEffect, useRef } from 'react';
 
-const GodotGame = () => {
-  useEffect(() => {
-  (window as any).myNextJsFunction = (message: string) => {
-    console.log(message); // "Hello from Godot!"
-  };
-  // ... rest of the useEffect code
-}, []);
+const ResponsiveGodotGame = () => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+    // --- CONFIGURATION ---
+    const gameName = 'web'; // IMPORTANT: Change this
+    const gamePath = '/game/';
+    // --- END CONFIGURATION ---
 
-  // --- CONFIGURATION ---
-  // 1. Update this to the name of your Godot export files (without the extension)
-  const gameName = 'web'; 
+    const gameScriptPath = `${gamePath}${gameName}.js`;
 
-  // 2. Update this to the path where you placed your Godot files in the `public` directory
-  const gamePath = '/exports/'; 
-  // --- END CONFIGURATION ---
+    // 1. Effect to dynamically load the Godot game script
+    useEffect(() => {
+        const script = document.createElement('script');
+        script.src = gameScriptPath;
+        script.async = true;
+        
+        script.onload = () => {
+            console.log('Godot script loaded.');
+            setIsScriptLoaded(true); // Signal that the script is ready
+        };
+        
+        script.onerror = (e) => {
+            console.error("Failed to load Godot script:", e);
+        };
 
-  const gameScriptPath = `${gamePath}${gameName}.js`;
+        document.body.appendChild(script);
 
-  const handleScriptReady = () => {
-    console.log('Godot script has loaded. Initializing engine...');
-    
-    // Ensure the Engine class is available on the window object
-    const Engine = (window as any).Engine;
-    if (!Engine) {
-      console.error('Fatal: Godot Engine class not found. Check that the script path is correct.');
-      return;
-    }
-    
-    const engine = new Engine();
+        return () => {
+            // Clean up by removing the script
+            const scriptElement = document.querySelector(`script[src="${gameScriptPath}"]`);
+            if (scriptElement) {
+                document.body.removeChild(scriptElement);
+            }
+        };
+    }, [gameScriptPath]);
 
-    engine.startGame({
-      canvas: canvasRef.current,
-      executable: `${gamePath}${gameName}`, // This will be the .wasm file
-      mainPack: `${gamePath}${gameName}.pck`,
-    });
-  };
+    // 2. Effect to initialize and resize the game canvas
+    useEffect(() => {
+        // Only run this effect if the script is loaded
+        if (!isScriptLoaded || !canvasRef.current || !containerRef.current) {
+            return;
+        }
 
-  return (
-    <div>
-      <canvas ref={canvasRef} id="canvas" width="1024" height="600">
-        {/* Fallback content for browsers that don't support canvas */}
-        Your browser does not support the HTML5 canvas element.
-      </canvas>
+        const Engine = (window as any).Engine;
+        if (!Engine) {
+            console.error('Fatal: Godot Engine class not found.');
+            return;
+        }
+        
+        const engine = new Engine();
 
-      <Script 
-        src={gameScriptPath}
-        strategy="afterInteractive"
-        onReady={handleScriptReady}
-        onError={(e) => {
-          console.error('Failed to load the Godot script:', e);
-        }}
-      />
-    </div>
-  );
+        // Function to handle resizing the canvas
+        const handleResize = () => {
+            if (canvasRef.current && containerRef.current) {
+                const canvas = canvasRef.current;
+                const container = containerRef.current;
+                
+                // Get the container's size
+                const newWidth = container.clientWidth;
+                const newHeight = container.clientHeight;
+
+                // Update canvas rendering resolution
+                canvas.width = newWidth;
+                canvas.height = newHeight;
+                
+                // This will also notify the Godot engine of the new size
+            }
+        };
+
+        // Initial resize
+        handleResize();
+
+        // Set up resize listener
+        window.addEventListener('resize', handleResize);
+
+        // Start the game
+        engine.startGame({
+            canvas: canvasRef.current,
+            executable: `${gamePath}${gameName}`,
+            mainPack: `${gamePath}${gameName}.pck`,
+        });
+
+        // Cleanup on component unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            // Godot doesn't have a standard 'quit' method via JS,
+            // but the component unmounting will remove the canvas.
+        };
+
+    }, [isScriptLoaded, gameName, gamePath]); // Rerun if the script is loaded
+
+    return (
+        // --- THIS IS THE MODIFIED LINE ---
+        // This div now takes up the entire screen.
+        <div 
+            ref={containerRef} 
+            className="fixed inset-0 w-screen h-screen z-50 bg-black"
+        >
+            <canvas 
+                ref={canvasRef} 
+                id="canvas" 
+                className="absolute top-0 left-0 w-full h-full"
+            >
+                Your browser does not support the HTML5 canvas element.
+            </canvas>
+        </div>
+    );
 };
 
-export default GodotGame;
+export default ResponsiveGodotGame;
