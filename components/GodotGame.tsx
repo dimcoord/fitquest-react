@@ -6,13 +6,36 @@ const ResponsiveGodotGame = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+    const [initialData, setInitialData] = useState({
+        height: 0,
+        weight: 0,
+        calories: 0,
+        age: 0,
+        bmi: 0,
+        name: '',
+        sex: 1 // 1 default, 2 male, 3 female
+    });
 
     // --- CONFIGURATION ---
-    const gameName = 'web'; // IMPORTANT: Change this
+    const gameName = 'web';
     const gamePath = '/game/';
-    // --- END CONFIGURATION ---
-
     const gameScriptPath = `${gamePath}${gameName}.js`;
+
+    useEffect(() => {
+        (window as any).initializeData = (newData: object) => {
+            setInitialData(prevData => ({
+                ...prevData,
+                ...newData
+            }));
+
+            console.table(newData);
+        };
+
+        // It's good practice to remove the function when the component unmounts
+        return () => {
+        delete (window as any).initialData;
+        };
+  }, []); // The empty array ensures this runs only once when the component mounts
 
     // 1. Effect to dynamically load the Godot game script
     useEffect(() => {
