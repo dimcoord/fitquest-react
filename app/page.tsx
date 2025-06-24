@@ -1,11 +1,37 @@
 'use client';
 
-import { HeartPulse, Target, Trophy, Wallet, ArrowRight } from 'lucide-react';
+import React from 'react'; // Import React for typing
+
+// --- Helper Components for Pixel Art Style ---
+
+// A container with a pixelated border and shadow
+const PixelBox = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+    <div className={`bg-gray-800 border-4 border-black p-6 ${className}`} style={{ boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)' }}>
+        {children}
+    </div>
+);
+
+// A pixel-art style button
+const PixelButton = ({ children, onClick, className = '' }: { children: React.ReactNode; onClick?: () => void; className?: string }) => (
+    <button 
+        onClick={onClick}
+        className={`bg-green-500 text-white font-display border-4 border-black px-6 py-3 hover:bg-green-600 active:bg-green-700 active:transform active:translate-y-1 active:shadow-none transition-all ${className}`}
+        style={{ boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)' }}
+    >
+        {children}
+    </button>
+);
 
 // --- Main Homepage Component ---
 const HomePage = () => {
     return (
-        <div className="bg-gray-900 text-white font-sans antialiased">
+        <div className="bg-[#1a1a1a] text-white font-body min-h-screen bg-repeat bg-[url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpiYGBgeP//f4YxQ2AANAQYACDAAn0CE/tU/6cAAAAASUVORK5CYII=')]">
+             {/* Import pixel fonts */}
+            <style jsx global>{`
+                @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+                .font-display { font-family: 'Press Start 2P', cursive; }
+                .font-body { font-family: 'VT323', monospace; }
+            `}</style>
             <Header />
             <main>
                 <HeroSection />
@@ -21,21 +47,15 @@ const HomePage = () => {
 // --- Sub-Components ---
 
 const Header = () => (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-80 backdrop-blur-sm border-b border-gray-800">
+    <header className="bg-[#111] border-b-4 border-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-                <div className="text-2xl font-bold">
-                    <a href="#" className="flex items-center space-x-2">
-                        <HeartPulse className="h-8 w-8 text-green-400" />
-                        <span>FitQuest</span>
-                    </a>
-                </div>
-                <nav className="hidden md:flex items-center space-x-6">
-                    <a href="#how-it-works" className="text-gray-300 hover:text-green-400 transition-colors duration-300">How It Works</a>
-                    <a href="#features" className="text-gray-300 hover:text-green-400 transition-colors duration-300">Features</a>
-                </nav>
-                 <a href="/game" className="inline-flex items-center justify-center px-5 py-2 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-all">
-                    Connect Metamask
+            <div className="flex items-center justify-between h-20">
+                <a href="#" className="flex items-center space-x-4">
+                    <span className="text-3xl" role="img" aria-label="heart">❤️</span>
+                    <span className="font-display text-2xl">FitQuest</span>
+                </a>
+                <a href="/connect" className="hidden md:block">
+                     <PixelButton>Connect Wallet</PixelButton>
                 </a>
             </div>
         </div>
@@ -43,19 +63,17 @@ const Header = () => (
 );
 
 const HeroSection = () => (
-    <section className="relative pt-32 pb-24 text-center">
-        <div className="absolute inset-0 bg-grid-gray-700/[0.1] [mask-image:linear-gradient(to_bottom,white,transparent)]"></div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-cyan-500">
-                Turn Your Fitness Goals into Rewards
+    <section className="text-center py-20 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 className="font-display text-4xl md:text-6xl text-green-400 [text-shadow:_4px_4px_0_rgb(0_0_0)]">
+                Level Up Your Fitness
             </h1>
-            <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-gray-300">
-                Level up your health journey. Track your progress, achieve your weight goals, and earn real rewards on the Internet Computer blockchain.
+            <p className="mt-6 max-w-2xl mx-auto text-2xl text-gray-300 leading-relaxed">
+                A fitness RPG where your real-life progress earns you on-chain loot. Track your goals, complete quests, and get rewarded.
             </p>
-            <div className="mt-10 flex justify-center">
-                <a href="/game" className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-full text-white bg-green-600 hover:bg-green-700 transition-all duration-300 shadow-lg shadow-green-500/30 transform hover:scale-105">
-                    Start Your Journey
-                    <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
+            <div className="mt-12">
+                <a href="/connect">
+                     <PixelButton className="text-xl px-10 py-4">Start Your Quest</PixelButton>
                 </a>
             </div>
         </div>
@@ -63,72 +81,66 @@ const HeroSection = () => (
 );
 
 const HowItWorksSection = () => (
-    <section id="how-it-works" className="py-20 bg-gray-900/50">
+    <section id="how-it-works" className="py-20 bg-[#111]/50 border-y-4 border-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold">Get Started in 3 Simple Steps</h2>
+                <h2 className="font-display text-3xl [text-shadow:_4px_4px_0_rgb(0_0_0)]">Quest Log</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div className="bg-gray-800 p-8 rounded-xl text-center flex flex-col items-center">
-                    <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-900/50 mb-4 border border-green-500">
-                        <Wallet className="h-8 w-8 text-green-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">1. Connect Wallet</h3>
-                    <p className="text-gray-400">Securely connect your Internet Identity or other supported ICP wallet to create your decentralized profile.</p>
-                </div>
-                 <div className="bg-gray-800 p-8 rounded-xl text-center flex flex-col items-center">
-                     <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-900/50 mb-4 border border-green-500">
-                        <Target className="h-8 w-8 text-green-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">2. Set & Track Goals</h3>
-                    <p className="text-gray-400">Define your weight loss or gain targets. Log your activities and progress through our simple interface.</p>
-                </div>
-                 <div className="bg-gray-800 p-8 rounded-xl text-center flex flex-col items-center">
-                    <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-900/50 mb-4 border border-green-500">
-                        <Trophy className="h-8 w-8 text-green-400" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">3. Earn Rewards</h3>
-                    <p className="text-gray-400">As you hit your milestones, automatically earn on-chain rewards like NFTs and tokens directly to your wallet.</p>
-                </div>
+                <PixelBox className="text-center">
+                    <h3 className="font-display text-xl text-green-400 mb-4">1. Accept Quest</h3>
+                    <p className="text-lg">Connect your Internet Identity and set your weight loss or gain goal. This is your main quest!</p>
+                </PixelBox>
+                <PixelBox className="text-center">
+                    <h3 className="font-display text-xl text-green-400 mb-4">2. Gain EXP</h3>
+                    <p className="text-lg">Log your workouts and weigh-ins. Each entry is like defeating a monster, earning you experience points.</p>
+                </PixelBox>
+                <PixelBox className="text-center">
+                    <h3 className="font-display text-xl text-green-400 mb-4">3. Get Loot</h3>
+                    <p className="text-lg">As you level up and hit milestones, unique NFT rewards and tokens are sent directly to your IC wallet.</p>
+                </PixelBox>
             </div>
         </div>
     </section>
 );
 
-
 const FeaturesSection = () => (
     <section id="features" className="py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-extrabold">A Modern Approach to Fitness</h2>
-                <p className="mt-3 max-w-2xl mx-auto text-lg text-gray-400">Combining motivational psychology with decentralized technology.</p>
+                <h2 className="font-display text-3xl [text-shadow:_4px_4px_0_rgb(0_0_0)]">Legendary Features</h2>
             </div>
-            <div className="grid md:grid-cols-3 gap-8 text-left">
-                <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700">
-                    <h3 className="text-2xl font-bold mb-3 text-cyan-400">Gamified Progress</h3>
-                    <p className="text-gray-300">Turn the grind into a game. Level up, unlock achievements, and stay motivated with interactive feedback and a clear path to success.</p>
-                </div>
-                <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700">
-                    <h3 className="text-2xl font-bold mb-3 text-green-400">Decentralized & Secure</h3>
-                    <p className="text-gray-300">Built on the Internet Computer, your data and rewards are truly yours. Experience unparalleled security and transparency.</p>
-                </div>
-                 <div className="bg-gray-800 p-8 rounded-2xl border border-gray-700">
-                    <h3 className="text-2xl font-bold mb-3 text-yellow-400">Personalized Journeys</h3>
-                    <p className="text-gray-300">Whether you want to lose, gain, or maintain weight, FitChain adapts to your personal goals and helps you build sustainable habits.</p>
-                </div>
+            <div className="grid md:grid-cols-2 gap-8">
+                 <PixelBox>
+                     <div className="flex items-start space-x-4">
+                        <span className="text-4xl" role="img" aria-label="target">🎯</span>
+                        <div>
+                             <h3 className="font-display text-2xl text-cyan-400">RPG Progression</h3>
+                             <p className="text-xl mt-2">Your fitness journey is an epic role-playing game. Your stats increase with every workout, making you stronger both in-game and in real life.</p>
+                        </div>
+                     </div>
+                 </PixelBox>
+                 <PixelBox>
+                     <div className="flex items-start space-x-4">
+                        <span className="text-4xl" role="img" aria-label="chain">🔗</span>
+                        <div>
+                             <h3 className="font-display text-2xl text-indigo-400">On-Chain Loot</h3>
+                             <p className="text-xl mt-2">Powered by the Internet Computer. Your achievements are minted as permanent, ownable NFT rewards. No centralized servers, pure blockchain.</p>
+                        </div>
+                     </div>
+                 </PixelBox>
             </div>
         </div>
     </section>
 );
 
 const CTASection = () => (
-    <section className="py-20 bg-gray-800">
+    <section className="py-20 bg-[#111] border-t-4 border-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-bold text-white">Ready to Level Up Your Life?</h2>
-            <p className="mt-3 text-lg text-gray-300 max-w-xl mx-auto">Stop wishing, start doing. Connect your wallet and begin your fitness journey on the blockchain today.</p>
+            <h2 className="font-display text-3xl text-yellow-400 [text-shadow:_4px_4px_0_rgb(0_0_0)]">Ready, Player One?</h2>
             <div className="mt-8">
-                 <a href="/app" className="inline-flex items-center justify-center px-10 py-4 border border-transparent text-lg font-medium rounded-full text-gray-900 bg-green-400 hover:bg-green-300 transition-all duration-300 transform hover:scale-105">
-                    Connect and Get Started
+                 <a href="/connect" className="inline-block">
+                     <PixelButton className="text-2xl px-12 py-5 bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700">Join the Game</PixelButton>
                 </a>
             </div>
         </div>
@@ -136,18 +148,11 @@ const CTASection = () => (
 );
 
 const Footer = () => (
-    <footer className="bg-gray-900 border-t border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-                <p className="text-gray-400">&copy; {new Date().getFullYear()} FitQuest. All rights reserved.</p>
-                <div className="flex space-x-4 mt-4 md:mt-0">
-                    <a href="https://github.com/dfinity/ic" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">Internet Computer</a>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">Community</a>
-                </div>
-            </div>
+    <footer className="bg-black py-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-lg text-gray-500 font-body">&copy; {new Date().getFullYear()} FitQuest. Built on the Internet Computer.</p>
         </div>
     </footer>
 );
-
 
 export default HomePage;

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 // Import AuthClient directly from a CDN to resolve the module error
 import { AuthClient } from "@dfinity/auth-client";
 import { User, LogIn, LogOut, CheckCircle, Copy } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 // --- Main IC Wallet Connect Page Component ---
 const InternetComputerWalletPage = () => {
@@ -11,6 +12,7 @@ const InternetComputerWalletPage = () => {
     const [principal, setPrincipal] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter();
 
     // Initialize the AuthClient
     useEffect(() => {
@@ -61,6 +63,10 @@ const InternetComputerWalletPage = () => {
         setIsAuthenticated(false);
         setPrincipal(null);
     };
+
+    const handleRegister = () => {
+        window.open('https://identity.internetcomputer.org/', '_blank')
+    };
     
     // Copy principal to clipboard
     const copyToClipboard = () => {
@@ -75,7 +81,7 @@ const InternetComputerWalletPage = () => {
             <div className="w-full max-w-md mx-auto bg-gray-800 rounded-2xl shadow-2xl shadow-black/50 p-8 border border-gray-700">
                 <div className="text-center mb-8">
                     <div className="flex justify-center mb-4">
-                        <img src="https://cryptologos.cc/logos/internet-computer-icp-logo.svg?v=032" alt="Internet Computer Logo" className="h-16 w-16"/>
+                        <img src="icp_logo.svg" alt="Internet Computer Logo" className="h-16 w-16"/>
                     </div>
                     <h1 className="text-3xl font-bold text-cyan-400">Internet Computer Login</h1>
                     <p className="text-gray-400 mt-2">Use your Internet Identity to securely log in and connect to the app.</p>
@@ -85,13 +91,20 @@ const InternetComputerWalletPage = () => {
                     <div className="text-center text-gray-400">Loading...</div>
                 ) : !isAuthenticated ? (
                      // --- Login View ---
-                    <button 
+                    <>
+                    <button
                         onClick={handleLogin}
                         className="w-full flex items-center justify-center px-6 py-4 border border-transparent text-lg font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 transition-all duration-300 transform hover:scale-105"
                     >
                         <LogIn className="mr-3 h-6 w-6" />
                         Login with Internet Identity
-                    </button>
+                    </button><button
+                        onClick={handleRegister}
+                        className="mt-6 w-full flex items-center justify-center px-6 py-4 border border-transparent text-lg font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 transition-all duration-300 transform hover:scale-105"
+                    >
+                        <User className="mr-3 h-6 w-6" />
+                        Don't have one? Click me!
+                    </button></>
                 ) : (
                     // --- Logged In View ---
                     <div className="text-center space-y-6">
