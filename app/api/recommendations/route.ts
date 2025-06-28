@@ -6,13 +6,13 @@ export async function POST(request: NextRequest) {
   const characterData = await request.json();
 
   const prompt = `
-    Based on the following video game character profile, create a personalized, easy, and time efficient exercise routine.
+    Based on the following video game character profile, create a personalized exercise routine that will burn estimately 100-999 calories.
     The user wants three simple, unique, and clear recommendations.
     Return the response as a JSON object with four keys which are arrays of strings, those keys are:
-    - "title" 10-20 characters long.
-    - "description" 10-35 characters long.
+    - "title" 10-14 characters long.
+    - "description" 10-30 characters long.
     - "duration" the estimated duration in minutes. 1-2 characters long.
-    - "calories" the estimated burned calories. 1-4 characters long.
+    - "calories" the estimated burned calories. precisely 3 characters long.
 
     Character Profile:
     - BMI: ${characterData.bmi}
