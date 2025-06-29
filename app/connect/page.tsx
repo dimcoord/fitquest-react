@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// Import AuthClient directly from a CDN to resolve the module error
 import { AuthClient } from "@dfinity/auth-client";
+import { HttpAgent, Actor } from "@dfinity/agent";
 import { User, LogIn, LogOut, CheckCircle, Copy } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { idlFactory } from "../../my_backend.did";
+import canisterId from "../../canister_ids.json";
 
 // --- Main IC Wallet Connect Page Component ---
 const InternetComputerWalletPage = () => {
@@ -24,9 +26,14 @@ const InternetComputerWalletPage = () => {
                 const isAuthed = await client.isAuthenticated();
                 if (isAuthed) {
                     const identity = client.getIdentity();
+                    const agent = new HttpAgent({ identity });
                     const principalId = identity.getPrincipal().toText();
                     setPrincipal(principalId);
                     setIsAuthenticated(true);
+                    const backend = Actor.createActor(idlFactory, {
+                        agent,
+                        canisterId:"oypoi-liaaa-aaaao-a4lvq-cai",
+                        });
                 }
             } catch (error) {
                 console.error("Failed to create AuthClient:", error);
@@ -38,7 +45,6 @@ const InternetComputerWalletPage = () => {
         initAuthClient();
     }, []);
 
-    // Handle Login
     const handleLogin = async () => {
         if (!authClient) return;
 

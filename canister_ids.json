@@ -1,0 +1,11 @@
+{
+  "backend": {
+    "ic": "y3bit-3aaaa-aaaad-aawda-cai"
+  },
+  "frontend": {
+    "ic": "y4aoh-wyaaa-aaaad-aawdq-cai"
+  },
+  "test_app": {
+    "ic": "kvusz-kaaaa-aaaad-aabwa-cai"
+  }
+}
